@@ -1,38 +1,57 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Context from './Context';
 import fetchPlanets from '../helpers/starwarsplanetsApi';
 
 function Provider({ children }) {
   const [data, setData] = useState([]);
-  const [filters, setFilters] = useState({
+  const [filterName, setFilterName] = useState({
     filterByName: {
       name: '',
     },
   });
+  const [filterNum, setFilterNum] = useState({
+    filterByNumericValues: [],
+  });
+  const [planetsArr, setPlanetsArr] = useState([]);
 
-  const getPlanets = async () => {
-    const response = await fetchPlanets();
-    const { name } = filters.filterByName;
-    let filteredList;
+  useEffect(() => {
+    fetchPlanets().then((Arr) => setData(Arr));
+    fetchPlanets().then((Arr) => setPlanetsArr(Arr));
+  }, []);
+
+  const filterPlanets = () => {
+    const { name } = filterName.filterByName;
+    const { filterByNumericValues } = filterNum;
+    let filteredList = planetsArr;
     if (name !== '') {
-      filteredList = response
+      filteredList = data
         .filter((planet) => planet.name.toLowerCase()
           .includes(name.toLowerCase()));
-    } else {
-      filteredList = response;
     }
-    console.log(filteredList);
+    if (filterByNumericValues) {
+      filterByNumericValues.forEach((filterObj) => {
+        switch (filterObj) {
+        case 'population':
+          break;
+        default:
+          console.log('default');
+        }
+      });
+    }
     setData(filteredList);
   };
 
   return (
     <Context.Provider
       value={ {
-        filters,
-        setFilters,
-        getPlanets,
+        filterName,
+        setFilterName,
+        filterPlanets,
         data,
+        filterNum,
+        setFilterNum,
       } }
     >
       {children}
