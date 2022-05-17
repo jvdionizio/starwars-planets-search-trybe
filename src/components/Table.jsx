@@ -3,11 +3,15 @@ import React, { useContext, useEffect } from 'react';
 import Context from '../context/Context';
 
 function Table() {
-  const { data, filterPlanets, filterName } = useContext(Context);
+  const { data, filterPlanets, filterName, filterNum } = useContext(Context);
 
   useEffect(() => {
     filterPlanets();
   }, [filterName]);
+
+  useEffect(() => {
+    filterPlanets();
+  }, [filterNum]);
 
   return (
     <table>

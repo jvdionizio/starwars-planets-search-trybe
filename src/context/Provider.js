@@ -21,6 +21,30 @@ function Provider({ children }) {
     fetchPlanets().then((Arr) => setPlanetsArr(Arr));
   }, []);
 
+  const dataProcessing = (planet) => {
+    const { filterByNumericValues } = filterNum;
+    const bools = [];
+    filterByNumericValues.forEach((filterObj) => {
+      switch (filterObj.comparison) {
+      case 'maior que':
+        bools.push(Number(planet[filterObj.column]) >= Number([filterObj.value]));
+        break;
+
+      case 'menor que':
+        bools.push(Number(planet[filterObj.column]) <= Number([filterObj.value]));
+        break;
+
+      case 'igual a':
+        bools.push(Number(planet[filterObj.column]) === Number([filterObj.value]));
+        break;
+
+      default:
+        bools.push(true);
+      }
+    });
+    return bools.every((el) => el);
+  };
+
   const filterPlanets = () => {
     const { name } = filterName.filterByName;
     const { filterByNumericValues } = filterNum;
@@ -31,14 +55,7 @@ function Provider({ children }) {
           .includes(name.toLowerCase()));
     }
     if (filterByNumericValues) {
-      filterByNumericValues.forEach((filterObj) => {
-        switch (filterObj) {
-        case 'population':
-          break;
-        default:
-          console.log('default');
-        }
-      });
+      filteredList = filteredList.filter(dataProcessing);
     }
     setData(filteredList);
   };
