@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Context from '../context/Context';
 import trashIcon from '../images/trash-svgrepo-com.svg';
 
@@ -10,6 +10,7 @@ function TableControl() {
     comparison: 'maior que',
     value: '',
   });
+  const [possibleColumns, setColumns] = useState(["population","orbital_period","diameter","rotation_period","surface_water"])
   const { name } = filterName.filterByName;
   const { filterByNumericValues } = filterNum;
 
@@ -55,6 +56,23 @@ function TableControl() {
     setFilterNum({ filterByNumericValues: newFilters });
   };
 
+  const noRepeat = () => {
+    const columns = ["population","orbital_period","diameter","rotation_period","surface_water"]
+    if (filterByNumericValues.length !== 0){
+      filterByNumericValues.forEach((filterObj) => {
+        setColumns(
+          columns.filter((column) => column !== filterObj.column)
+        )
+      })
+    } else {
+      setColumns(["population","orbital_period","diameter","rotation_period","surface_water"]);
+    }
+  }
+
+  useEffect(() => {
+    noRepeat();
+  }, [filterNum]);
+
   return (
     <div>
       <div>
@@ -77,11 +95,11 @@ function TableControl() {
             value={ localValues.column }
             onChange={ handleChange }
           >
-            <option value="population">population</option>
-            <option value="orbital_period">orbital_period</option>
-            <option value="diameter">diameter</option>
-            <option value="rotation_period">rotation_period</option>
-            <option value="surface_water">surface_water</option>
+            {
+              possibleColumns?.map((column, index) => (
+                <option key={ index } value={column}>{column}</option>
+              ))
+            }
           </select>
         </label>
         <label htmlFor="comparison">
