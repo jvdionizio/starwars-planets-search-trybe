@@ -27,11 +27,11 @@ function Provider({ children }) {
     filterByNumericValues.forEach((filterObj) => {
       switch (filterObj.comparison) {
       case 'maior que':
-        bools.push(Number(planet[filterObj.column]) >= Number([filterObj.value]));
+        bools.push(Number(planet[filterObj.column]) > Number([filterObj.value]));
         break;
 
       case 'menor que':
-        bools.push(Number(planet[filterObj.column]) <= Number([filterObj.value]));
+        bools.push(Number(planet[filterObj.column]) < Number([filterObj.value]));
         break;
 
       case 'igual a':

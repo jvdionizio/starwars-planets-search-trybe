@@ -8,7 +8,7 @@ function TableControl() {
   const [localValues, setLocalValues] = useState({
     column: 'population',
     comparison: 'maior que',
-    value: '',
+    value: 0,
   });
   const [possibleColumns, setColumns] = useState(["population","orbital_period","diameter","rotation_period","surface_water"])
   const { name } = filterName.filterByName;
@@ -37,6 +37,11 @@ function TableControl() {
     const newFilters = filterByNumericValues;
     newFilters.push(localValues);
     setFilterNum({ filterByNumericValues: newFilters });
+    setLocalValues({
+      column: 'population',
+      comparison: 'maior que',
+      value: 0,
+    });
   };
 
   const filterExclude = ({ target }) => {
@@ -67,6 +72,16 @@ function TableControl() {
     } else {
       setColumns(["population","orbital_period","diameter","rotation_period","surface_water"]);
     }
+  }
+
+  const filterExcludeAll = () => {
+    setFilterNum({ filterByNumericValues: [] });
+    setColumns(["population","orbital_period","diameter","rotation_period","surface_water"]);
+    setLocalValues({
+      column: 'population',
+      comparison: 'maior que',
+      value: 0,
+    });
   }
 
   useEffect(() => {
@@ -134,20 +149,28 @@ function TableControl() {
         </button>
       </div>
       <div>
+        <button
+         type="button"
+         data-testid='button-remove-filters'
+         onClick={ filterExcludeAll }
+        >
+          Remover Filtros
+        </button>
+      </div>
+      <div>
         {
           filterByNumericValues?.map((filtro, index) => {
             const sentence = `${filtro.column} ${filtro.comparison} ${filtro.value}`;
             return (
-              <div key={ index }>
+              <div key={ index } data-testid='filter'>
                 <span>{sentence}</span>
-                <input
-                  type="image"
-                  src={ trashIcon }
-                  alt="trash icon"
+                <button
+                  type="button"
                   id={ sentence }
                   onClick={ filterExclude }
-                  className="icon"
-                />
+                  >
+                  X
+                </button>
               </div>
             );
           })
