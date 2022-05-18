@@ -1,16 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState, useEffect } from 'react';
 import Context from '../context/Context';
-import trashIcon from '../images/trash-svgrepo-com.svg';
+import SortArea from './SortArea';
 
 function TableControl() {
   const { filterName, setFilterName, setFilterNum, filterNum } = useContext(Context);
-  const [localValues, setLocalValues] = useState({
+  const [localValuesNum, setLocalValuesNum] = useState({
     column: 'population',
     comparison: 'maior que',
     value: 0,
   });
-  const [possibleColumns, setColumns] = useState(["population","orbital_period","diameter","rotation_period","surface_water"])
+  const [possibleColumns, setColumns] = useState([
+    'population',
+    'orbital_period',
+    'diameter', 'rotation_period',
+    'surface_water',
+  ]);
   const { name } = filterName.filterByName;
   const { filterByNumericValues } = filterNum;
 
@@ -26,8 +31,8 @@ function TableControl() {
     if (
       targetName === 'column' || targetName === 'comparison' || targetName === 'value'
     ) {
-      setLocalValues({
-        ...localValues,
+      setLocalValuesNum({
+        ...localValuesNum,
         [targetName]: target.value,
       });
     }
@@ -35,9 +40,9 @@ function TableControl() {
 
   const handleClick = () => {
     const newFilters = filterByNumericValues;
-    newFilters.push(localValues);
+    newFilters.push(localValuesNum);
     setFilterNum({ filterByNumericValues: newFilters });
-    setLocalValues({
+    setLocalValuesNum({
       column: 'population',
       comparison: 'maior que',
       value: 0,
@@ -62,27 +67,43 @@ function TableControl() {
   };
 
   const noRepeat = () => {
-    const columns = ["population","orbital_period","diameter","rotation_period","surface_water"]
-    if (filterByNumericValues.length !== 0){
+    const columns = [
+      'population',
+      'orbital_period',
+      'diameter', 'rotation_period',
+      'surface_water',
+    ];
+    if (filterByNumericValues.length !== 0) {
       filterByNumericValues.forEach((filterObj) => {
         setColumns(
-          columns.filter((column) => column !== filterObj.column)
-        )
-      })
+          columns.filter((column) => column !== filterObj.column),
+        );
+      });
     } else {
-      setColumns(["population","orbital_period","diameter","rotation_period","surface_water"]);
+      setColumns([
+        'population',
+        'orbital_period',
+        'diameter',
+        'rotation_period',
+        'surface_water',
+      ]);
     }
-  }
+  };
 
   const filterExcludeAll = () => {
     setFilterNum({ filterByNumericValues: [] });
-    setColumns(["population","orbital_period","diameter","rotation_period","surface_water"]);
-    setLocalValues({
+    setColumns([
+      'population',
+      'orbital_period',
+      'diameter', 'rotation_period',
+      'surface_water',
+    ]);
+    setLocalValuesNum({
       column: 'population',
       comparison: 'maior que',
       value: 0,
     });
-  }
+  };
 
   useEffect(() => {
     noRepeat();
@@ -107,12 +128,12 @@ function TableControl() {
           <select
             data-testid="column-filter"
             name="column"
-            value={ localValues.column }
+            value={ localValuesNum.column }
             onChange={ handleChange }
           >
             {
-              possibleColumns?.map((column, index) => (
-                <option key={ index } value={column}>{column}</option>
+              possibleColumns.map((column, index) => (
+                <option key={ index } value={ column }>{column}</option>
               ))
             }
           </select>
@@ -122,7 +143,7 @@ function TableControl() {
           <select
             data-testid="comparison-filter"
             name="comparison"
-            value={ localValues.comparison }
+            value={ localValuesNum.comparison }
             onChange={ handleChange }
           >
             <option value="maior que">maior que</option>
@@ -136,7 +157,7 @@ function TableControl() {
             type="number"
             data-testid="value-filter"
             name="value"
-            value={ localValues.value }
+            value={ localValuesNum.value }
             onChange={ handleChange }
           />
         </label>
@@ -150,25 +171,26 @@ function TableControl() {
       </div>
       <div>
         <button
-         type="button"
-         data-testid='button-remove-filters'
-         onClick={ filterExcludeAll }
+          type="button"
+          data-testid="button-remove-filters"
+          onClick={ filterExcludeAll }
         >
           Remover Filtros
         </button>
       </div>
+      <SortArea />
       <div>
         {
-          filterByNumericValues?.map((filtro, index) => {
+          filterByNumericValues.map((filtro, index) => {
             const sentence = `${filtro.column} ${filtro.comparison} ${filtro.value}`;
             return (
-              <div key={ index } data-testid='filter'>
+              <div key={ index } data-testid="filter">
                 <span>{sentence}</span>
                 <button
                   type="button"
                   id={ sentence }
                   onClick={ filterExclude }
-                  >
+                >
                   X
                 </button>
               </div>

@@ -15,11 +15,9 @@ function Provider({ children }) {
     filterByNumericValues: [],
   });
   const [planetsArr, setPlanetsArr] = useState([]);
-
-  useEffect(() => {
-    fetchPlanets().then((Arr) => setData(Arr));
-    fetchPlanets().then((Arr) => setPlanetsArr(Arr));
-  }, []);
+  const [sortParams, setSortParams] = useState({
+    order: { column: '', sort: '' },
+  });
 
   const dataProcessing = (planet) => {
     const { filterByNumericValues } = filterNum;
@@ -60,6 +58,49 @@ function Provider({ children }) {
     setData(filteredList);
   };
 
+  const sortingByColumn = () => {
+    const { column, sort } = sortParams.order;
+    return data.sort((a, b) => {
+      if (Number(a[column]) === Number(b[column])) return 0;
+      if (Number.isNaN(Number(a[column]))) return 1;
+      if (Number.isNaN(Number(b[column]))) return 1;
+      if (sort === 'ASC') return Number(a[column]) - Number(b[column]);
+      if (sort === 'DESC') return Number(b[column]) - Number(a[column]);
+      return 0;
+    });
+  };
+
+  const sorting = () => {
+    const MENOS_UM = -1;
+    const sorted = data.sort((a, b) => {
+      if (a.name > b.name) {
+        return 1;
+      }
+      if (a.name < b.name) {
+        return MENOS_UM;
+      }
+      return 0;
+    });
+    const { column } = sortParams.order;
+    if (column !== '') {
+      return setData(sortingByColumn);
+    }
+    return setData(sorted);
+  };
+
+  useEffect(() => {
+    fetchPlanets().then((Arr) => setData(Arr));
+    fetchPlanets().then((Arr) => setPlanetsArr(Arr));
+  }, []);
+
+  useEffect(() => {
+    sorting();
+  }, [data]);
+
+  useEffect(() => {
+    sorting();
+  }, [sortParams]);
+
   return (
     <Context.Provider
       value={ {
@@ -69,6 +110,9 @@ function Provider({ children }) {
         data,
         filterNum,
         setFilterNum,
+        sorting,
+        sortParams,
+        setSortParams,
       } }
     >
       {children}

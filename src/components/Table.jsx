@@ -3,7 +3,18 @@ import React, { useContext, useEffect } from 'react';
 import Context from '../context/Context';
 
 function Table() {
-  const { data, filterPlanets, filterName, filterNum } = useContext(Context);
+  const {
+    data,
+    filterPlanets,
+    filterName,
+    filterNum,
+    sorting,
+    sortParams,
+  } = useContext(Context);
+
+  useEffect(() => {
+    sorting();
+  }, [sortParams]);
 
   useEffect(() => {
     filterPlanets();
@@ -36,7 +47,7 @@ function Table() {
         {
           data.map((planet, index) => (
             <tr key={ index }>
-              <td>{planet.name}</td>
+              <td data-testid="planet-name">{planet.name}</td>
               <td>{planet.rotation_period}</td>
               <td>{planet.orbital_period}</td>
               <td>{planet.diameter}</td>
