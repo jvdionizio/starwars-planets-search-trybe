@@ -43,14 +43,19 @@ function Provider({ children }) {
     return bools.every((el) => el);
   };
 
-  const sortingByColumn = (column, sort, filteredList) => filteredList.sort((a, b) => {
-    if (Number.isNaN(Number(a[column]))) return 1;
-    if (Number.isNaN(Number(b[column]))) return 1;
-    if (Number(a[column]) === Number(b[column])) return 0;
-    if (sort === 'ASC') return Number(a[column]) - Number(b[column]);
-    if (sort === 'DESC') return Number(b[column]) - Number(a[column]);
-    return 0;
-  });
+  const sortingByColumn = (column, sort, filteredList) => {
+    const newList = filteredList.filter((planetObj) => planetObj[column] !== 'unknown');
+    const newList1 = filteredList.filter((planetObj) => planetObj[column] === 'unknown');
+    const newList2 = newList.sort((a, b) => {
+      if (Number(a[column]) === Number(b[column])) return 0;
+      if (sort === 'ASC') return Number(a[column]) - Number(b[column]);
+      if (sort === 'DESC') return Number(b[column]) - Number(a[column]);
+      return 0;
+    });
+    newList1.forEach((el) => newList2.push(el));
+    console.log(newList2);
+    return newList2;
+  };
 
   const sorting = (Arr) => {
     const MENOS_UM = -1;
