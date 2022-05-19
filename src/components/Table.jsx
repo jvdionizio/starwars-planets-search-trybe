@@ -8,13 +8,8 @@ function Table() {
     filterPlanets,
     filterName,
     filterNum,
-    sorting,
     sortParams,
   } = useContext(Context);
-
-  useEffect(() => {
-    sorting();
-  }, [sortParams]);
 
   useEffect(() => {
     filterPlanets();
@@ -23,6 +18,10 @@ function Table() {
   useEffect(() => {
     filterPlanets();
   }, [filterNum]);
+
+  useEffect(() => {
+    filterPlanets();
+  }, [sortParams]);
 
   return (
     <table>

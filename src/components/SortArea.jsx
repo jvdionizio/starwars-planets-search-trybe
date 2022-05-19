@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import Context from '../context/Context';
 
 function SortArea() {
-  const { setSortParams, sorting } = useContext(Context);
+  const { setSortParams } = useContext(Context);
 
   const [localValuesSort, setLocalValuesSort] = useState({
     column: 'population',
@@ -19,7 +19,6 @@ function SortArea() {
 
   const handleClick = () => {
     setSortParams({ order: localValuesSort });
-    sorting();
   };
 
   return (

@@ -43,36 +43,18 @@ function Provider({ children }) {
     return bools.every((el) => el);
   };
 
-  const filterPlanets = () => {
-    const { name } = filterName.filterByName;
-    const { filterByNumericValues } = filterNum;
-    let filteredList = planetsArr;
-    if (name !== '') {
-      filteredList = data
-        .filter((planet) => planet.name.toLowerCase()
-          .includes(name.toLowerCase()));
-    }
-    if (filterByNumericValues) {
-      filteredList = filteredList.filter(dataProcessing);
-    }
-    setData(filteredList);
-  };
+  const sortingByColumn = (column, sort, filteredList) => filteredList.sort((a, b) => {
+    if (Number.isNaN(Number(a[column]))) return 1;
+    if (Number.isNaN(Number(b[column]))) return 1;
+    if (Number(a[column]) === Number(b[column])) return 0;
+    if (sort === 'ASC') return Number(a[column]) - Number(b[column]);
+    if (sort === 'DESC') return Number(b[column]) - Number(a[column]);
+    return 0;
+  });
 
-  const sortingByColumn = () => {
-    const { column, sort } = sortParams.order;
-    return data.sort((a, b) => {
-      if (Number(a[column]) === Number(b[column])) return 0;
-      if (Number.isNaN(Number(a[column]))) return 1;
-      if (Number.isNaN(Number(b[column]))) return 1;
-      if (sort === 'ASC') return Number(a[column]) - Number(b[column]);
-      if (sort === 'DESC') return Number(b[column]) - Number(a[column]);
-      return 0;
-    });
-  };
-
-  const sorting = () => {
+  const sorting = (Arr) => {
     const MENOS_UM = -1;
-    const sorted = data.sort((a, b) => {
+    return Arr.sort((a, b) => {
       if (a.name > b.name) {
         return 1;
       }
@@ -81,29 +63,37 @@ function Provider({ children }) {
       }
       return 0;
     });
-    const { column } = sortParams.order;
-    if (column !== '') {
-      return setData(sortingByColumn);
+  };
+
+  const filterPlanets = () => {
+    const { name } = filterName.filterByName;
+    const { filterByNumericValues } = filterNum;
+    const { column, sort } = sortParams.order;
+    let filteredList = planetsArr;
+    if (name !== '') {
+      filteredList = planetsArr
+        .filter((planet) => planet.name.toLowerCase()
+          .includes(name.toLowerCase()));
     }
-    return setData(sorted);
+    if (filterByNumericValues) {
+      filteredList = filteredList.filter(dataProcessing);
+    }
+    if (column.length !== 0) {
+      setData(sortingByColumn(column, sort, filteredList));
+    } else {
+      setData(filteredList);
+    }
   };
 
   useEffect(() => {
-    fetchPlanets().then((Arr) => setData(Arr));
+    fetchPlanets().then((Arr) => setData(sorting(Arr)));
     fetchPlanets().then((Arr) => setPlanetsArr(Arr));
   }, []);
-
-  useEffect(() => {
-    sorting();
-  }, [data]);
-
-  useEffect(() => {
-    sorting();
-  }, [sortParams]);
 
   return (
     <Context.Provider
       value={ {
+        planetsArr,
         filterName,
         setFilterName,
         filterPlanets,
